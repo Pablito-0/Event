@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Event, Ticket, Company
+from .models import *
 
 
 class EventSerializer(serializers.HyperlinkedModelSerializer):
@@ -25,3 +25,8 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Company
         fields = ('title',)
+
+class CustomUserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = '__all__'

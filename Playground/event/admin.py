@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
 
-from event.models import Company, Event, Ticket
+from event.models import *
 
 admin.site.register(Company)
 
@@ -14,11 +14,14 @@ class TicketAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-
     def save_model(self, request, obj, form, change):
-        if form.cleaned_data["ticket_count"] < form.initial["ticket_count"]:
+        if form.initial.get("ticket_count") and form.cleaned_data["ticket_count"] < form.initial["ticket_count"]:
             messages.warning(
                 request,
                 f"Ticket count should be greater than initial value, so we set it to {form.initial['ticket_count']}",
             )
         super().save_model(request, obj, form, change)
+
+@admin.register(CustomUser)
+class CustomUserAdmin(admin.ModelAdmin):
+    pass

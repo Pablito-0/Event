@@ -134,3 +134,11 @@ VIP_TICKET_RATE = 0.1
 #     #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
 #     ]
 # }
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}
+
+AUTH_USER_MODEL = 'event.CustomUser'

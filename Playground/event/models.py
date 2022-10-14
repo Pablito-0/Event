@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 
 
@@ -37,13 +37,23 @@ class Event(BaseDate):
         super().save(*args, **kwargs)
 
 
+class CustomUser(AbstractUser):
+    TIERS = ('G', 'Gold'), \
+            ('S', 'Silver'), \
+            ('B', 'Bronse')
+
+    tier = models.CharField(max_length=1, verbose_name='Уровень подписки', choices=TIERS, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.tier}'
+
 
 class Ticket(BaseDate):
     event = models.ForeignKey('Event', verbose_name='Название мероприятия', on_delete=models.CASCADE)
     price = models.PositiveIntegerField(verbose_name='Цена')
     number = models.PositiveIntegerField(verbose_name='Номер билета')
     vip = models.BooleanField(verbose_name='Статус билета "ВИП"', default=False)
-    user = models.ForeignKey(User, verbose_name='Посетитель', on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(CustomUser, verbose_name='Посетитель', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return f'{self.event} | {self.user}'

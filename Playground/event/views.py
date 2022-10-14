@@ -1,21 +1,18 @@
-from django.forms import model_to_dict
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
+
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from rest_framework.decorators import api_view
-from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
+
 from rest_framework.response import Response
-from rest_framework.templatetags.rest_framework import data
-from rest_framework.views import APIView
+
 from django.views.decorators.csrf import csrf_exempt
 from .forms import RegisterUserForm
 
 from .models import Event, Ticket, Company
-from rest_framework import viewsets
+from rest_framework import viewsets, status, generics
 from .serializers import EventSerializer, TicketSerializer, CompanySerializer
-# Create your views here.
 
 
 def get_event(request, pk: int):
@@ -51,6 +48,7 @@ def showall(request):
     serializer = TicketSerializer(Ticket.objects.all(), many=True)
     return Response(serializer.data)
 
+
 @api_view(["POST", "GET"])
 def showone(request, pk: int):
     serializer = TicketSerializer(Ticket.objects.get(pk=pk), many=True)
@@ -79,24 +77,26 @@ def deleted(request, pk: int):
     return Response(status=204)
 
 
-# class SignUpView(CreateView):
-#     template_name = 'register.html'
-#     form_class = RegisterUserForm
-#     success_url = reverse_lazy('register')
-#
-#
-# class EventViewSet(viewsets.ModelViewSet):
-#     queryset = Event.objects.all().order_by('title')
-#     serializer_class = EventSerializer
-#
-#
-# class TicketViewSet(viewsets.ModelViewSet):
-#     queryset = Ticket.objects.all().order_by('number')
-#     serializer_class = TicketSerializer
-#
-#
-# class CompanyViewSet(viewsets.ModelViewSet):
-#     queryset = Company.objects.all().order_by('title')
-#     serializer_class = CompanySerializer
+@api_view(["GET"])
+def showstatus(request):
+    return Response({"status": "ok"}, status=status.HTTP_200_OK)
+
+
+class EventGet(generics.ListCreateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class TicketGet(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+class CompanyGet(generics.RetrieveAPIView):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+    permission_classes = [IsAdminUser]
 
 

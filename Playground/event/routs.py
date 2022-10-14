@@ -1,6 +1,6 @@
 from django.urls import path
 
-from event.views import get_all_events, get_event, test_drf, deleted, showall, showone
+from event.views import get_all_events, get_event, test_drf, deleted, showall, showone, showstatus
 
 urlpatterns = [
     path('', get_all_events),
@@ -9,4 +9,5 @@ urlpatterns = [
     path('del/<int:pk>', deleted),
     path('showone/<int:pk>', showone),
     path('showall/', showall),
+    path('ping/', showstatus)
     ]
